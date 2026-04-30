@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A/M-8 — Design Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--black:#060608;--white:#f0eeea;--red:#ff2442;--dim:#131318;--border:rgba(255,255,255,0.07);}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:500;}
+nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2.5rem;border-bottom:1px solid var(--border);backdrop-filter:blur(16px);background:rgba(6,6,8,.85);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.15em;}
+.nav-logo em{color:var(--red);font-style:normal;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.status-pill{display:flex;align-items:center;gap:.5rem;padding:.35rem .85rem;border:1px solid rgba(34,255,136,.2);border-radius:999px;font-family:'Rajdhani',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,238,234,.4);}
+.dot{width:6px;height:6px;background:#22ff88;border-radius:50%;animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.nav-cta{padding:.5rem 1.2rem;background:var(--red);color:var(--black);font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;}
+@media(max-width:600px){nav{padding:1rem 1.2rem;}.status-pill{display:none;}.nav-cta{font-size:.7rem;padding:.45rem 1rem;}}
+#hero{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:7rem 2rem 5rem;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,36,66,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,36,66,.035) 1px,transparent 1px);background-size:55px 55px;animation:gridMove 25s linear infinite;}
+@keyframes gridMove{to{transform:translateY(55px)}}
+.hero-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(255,36,66,.13) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);animation:glowPulse 5s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.18)}}
+.hero-inner{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.hero-tag{font-family:'Rajdhani',sans-serif;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;color:var(--red);margin-bottom:1.2rem;opacity:0;animation:up .7s .2s forwards;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(6rem,22vw,15rem);line-height:.88;opacity:0;animation:up .8s .4s forwards;}
+.hero-title .sl{color:var(--red);}
+.hero-title .ds{color:rgba(240,238,234,.25);}
+.hero-sub{font-size:clamp(.6rem,1.3vw,.8rem);color:rgba(240,238,234,.35);letter-spacing:.15em;margin-top:1.8rem;opacity:0;animation:up .7s .7s forwards;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:2.5rem;opacity:0;animation:up .7s .9s forwards;}
+.btn-primary{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 2rem;background:var(--red);color:var(--black);font-family:'Rajdhani',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .2s;}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px);}
+.btn-secondary{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 2rem;border:1px solid rgba(240,238,234,.15);color:rgba(240,238,234,.6);font-family:'Rajdhani',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:border-color .2s,color .2s;}
+.btn-secondary:hover{border-color:var(--red);color:var(--white);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;opacity:0;animation:up .6s 1.2s forwards;}
+.scroll-hint span{font-family:'Rajdhani',sans-serif;font-size:.6rem;letter-spacing:.3em;color:rgba(240,238,234,.25);text-transform:uppercase;}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--red),transparent);animation:drop 2s ease-in-out infinite;}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(1);transform-origin:bottom;opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.marquee-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1rem 0;background:var(--dim);}
+.marquee-track{display:flex;gap:1.5rem;white-space:nowrap;animation:mq 16s linear infinite;}
+.marquee-track span{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.2em;color:rgba(240,238,234,.18);flex-shrink:0;}
+.marquee-track em{color:var(--red);font-style:normal;}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+section{padding:6rem 2.5rem;}
+@media(max-width:600px){section{padding:4rem 1.2rem;}}
+.s-label{font-family:'Rajdhani',sans-serif;font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--red);margin-bottom:.8rem;}
+.s-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,6vw,4.5rem);line-height:1;margin-bottom:3rem;}
+.service-block{margin-bottom:4rem;}
+.service-block:last-child{margin-bottom:0;}
+.svc-heading{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.svc-heading h3{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,4vw,2.5rem);}
+.svc-heading .tag{font-family:'Rajdhani',sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;padding:.3rem .8rem;border:1px solid var(--red);color:var(--red);}
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);}
+.pkg{background:var(--black);padding:2rem;position:relative;overflow:hidden;transition:background .3s;display:flex;flex-direction:column;}
+.pkg::after{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--red);transition:height .4s;}
+.pkg:hover{background:var(--dim);}
+.pkg:hover::after{height:100%;}
+.pkg.popular{background:var(--dim);}
+.pkg.popular::before{content:'POPULAR';position:absolute;top:1rem;right:1rem;font-family:'Rajdhani',sans-serif;font-size:.55rem;letter-spacing:.25em;background:var(--red);color:var(--black);padding:.2rem .6rem;font-weight:700;}
+.pkg-tier{font-family:'Rajdhani',sans-serif;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(240,238,234,.3);margin-bottom:.5rem;}
+.pkg-price{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--red);line-height:1;margin-bottom:.2rem;}
+.pkg-price span{font-size:1.2rem;}
+.pkg-name{font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border);}
+.pkg-features{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;flex:1;}
+.pkg-features li{font-size:.65rem;line-height:1.7;color:rgba(240,238,234,.45);display:flex;align-items:flex-start;gap:.5rem;}
+.pkg-features li::before{content:'✓';color:var(--red);flex-shrink:0;}
+.pkg-features li.no{color:rgba(240,238,234,.2);}
+.pkg-features li.no::before{content:'✕';color:rgba(255,255,255,.12);}
+.pkg-btn{display:block;text-align:center;padding:.7rem 1rem;border:1px solid var(--red);color:var(--red);font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;background:none;transition:background .2s,color .2s;width:100%;}
+.pkg-btn:hover,.pkg.popular .pkg-btn{background:var(--red);color:var(--black);}
+#process{background:var(--dim);}
+.process-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;counter-reset:step;}
+.step{position:relative;padding-top:1.2rem;border-top:1px solid var(--border);counter-increment:step;}
+.step::before{content:"0" counter(step);font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:rgba(255,36,66,.15);display:block;margin-bottom:.5rem;}
+.step h3{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;}
+.step p{font-size:.68rem;line-height:1.8;color:rgba(240,238,234,.38);}
+#faq{background:var(--dim);}
+.faq-list{display:flex;flex-direction:column;gap:.5rem;max-width:760px;}
+.faq-item{border:1px solid var(--border);overflow:hidden;}
+.faq-q{width:100%;padding:1.1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:.05em;text-align:left;cursor:pointer;transition:color .2s;}
+.faq-q:hover{color:var(--red);}
+.faq-icon{font-size:1.2rem;flex-shrink:0;color:var(--red);transition:transform .3s;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;font-size:.72rem;line-height:1.9;color:rgba(240,238,234,.4);padding:0 1.4rem;}
+.faq-item.open .faq-a{max-height:200px;padding:0 1.4rem 1.2rem;}
+#contact{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;align-items:start;border-top:1px solid var(--border);}
+@media(max-width:780px){#contact{grid-template-columns:1fr;gap:2.5rem;}}
+.c-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,8vw,5.5rem);line-height:.9;margin-bottom:2rem;}
+.c-title em{color:var(--red);font-style:normal;}
+.contact-info{display:flex;flex-direction:column;gap:.8rem;margin-bottom:2rem;}
+.c-info-row{display:flex;align-items:center;gap:.8rem;font-size:.72rem;color:rgba(240,238,234,.45);}
+.socials{display:flex;gap:.8rem;flex-wrap:wrap;}
+.social-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.1rem;border:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,238,234,.5);text-decoration:none;transition:border-color .2s,color .2s;}
+.social-btn:hover{border-color:var(--red);color:var(--white);}
+.cf{display:flex;flex-direction:column;gap:.9rem;}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+@media(max-width:500px){.cf-row{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:.35rem;}
+.field label{font-family:'Rajdhani',sans-serif;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(240,238,234,.3);}
+.field input,.field textarea,.field select{background:var(--dim);border:1px solid rgba(255,255,255,.07);color:var(--white);font-family:'Space Mono',monospace;font-size:.75rem;padding:.85rem 1rem;outline:none;resize:none;transition:border-color .2s;appearance:none;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red);}
+.field select option{background:var(--dim);}
+.field textarea{min-height:90px;}
+.submit-btns{display:flex;gap:.8rem;flex-wrap:wrap;}
+.send-btn{display:inline-flex;align-items:center;gap:.7rem;padding:.95rem 1.8rem;font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s,transform .2s;}
+.send-email{background:var(--red);color:var(--black);}
+.send-wa{background:#25d366;color:#000;}
+.send-btn:hover{opacity:.88;transform:translateY(-1px);}
+#form-msg{font-family:'Rajdhani',sans-serif;font-size:.78rem;letter-spacing:.1em;padding:.7rem 1rem;display:none;}
+#form-msg.ok{background:rgba(34,255,136,.08);color:#22ff88;border:1px solid rgba(34,255,136,.2);}
+#form-msg.err{background:rgba(255,36,66,.08);color:var(--red);border:1px solid rgba(255,36,66,.2);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dim);border:1px solid var(--border);padding:2.5rem;width:100%;max-width:480px;position:relative;max-height:90svh;overflow-y:auto;}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(240,238,234,.4);font-size:1.4rem;cursor:pointer;}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;margin-bottom:.3rem;}
+.modal-pkg{font-family:'Rajdhani',sans-serif;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:var(--red);margin-bottom:1.5rem;}
+.modal-btns{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.5rem;}
+.modal-send{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 1.4rem;font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s;}
+.modal-email{background:var(--red);color:var(--black);}
+.modal-wa{background:#25d366;color:#000;}
+.modal-send:hover{opacity:.88;}
+#modal-msg{font-family:'Rajdhani',sans-serif;font-size:.72rem;padding:.6rem 1rem;display:none;margin-top:.3rem;}
+#modal-msg.ok{background:rgba(34,255,136,.08);color:#22ff88;border:1px solid rgba(34,255,136,.2);}
+#modal-msg.err{background:rgba(255,36,66,.08);color:var(--red);border:1px solid rgba(255,36,66,.2);}
+.wa-float{position:fixed;bottom:1.8rem;right:1.8rem;display:flex;align-items:center;gap:.6rem;padding:.8rem 1.4rem;background:#25d366;color:#000;font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:999px;box-shadow:0 4px 24px rgba(37,211,102,.3);z-index:300;transition:transform .2s;}
+.wa-float:hover{transform:translateY(-2px);}
+footer{padding:1.5rem 2.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+footer span{font-size:.62rem;color:rgba(240,238,234,.2);letter-spacing:.1em;}
+.f-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.15em;color:rgba(240,238,234,.12);}
+.f-logo em{color:rgba(255,36,66,.35);font-style:normal;}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>Place Your Order</h3>
+    <div class="modal-pkg" id="modal-pkg-name">— Package Selected —</div>
+    <div class="cf">
+      <div class="field"><label>Your Name *</label><input type="text" id="m-name" placeholder="John Doe"></div>
+      <div class="field"><label>Your Email *</label><input type="email" id="m-email" placeholder="john@email.com"></div>
+      <div class="field"><label>Instagram / Social Handle</label><input type="text" id="m-social" placeholder="@yourusername"></div>
+      <div class="field"><label>Project Details *</label><textarea id="m-msg" placeholder="Tell me about your brand, colors, style, and what you need..."></textarea></div>
+      <div class="modal-btns">
+        <button class="modal-send modal-email" onclick="sendOrder()">📩 Send Order</button>
+        <button class="modal-send modal-wa" onclick="sendOrderWA()">💬 WhatsApp</button>
+      </div>
+      <div id="modal-msg"></div>
+    </div>
+  </div>
+</div>
+
+<a class="wa-float" href="https://wa.me/971503328599?text=Hi!%20I%20found%20you%20on%20Instagram%20%40ayubzoda.i8%20and%20I%27m%20interested%20in%20your%20design%20services." target="_blank" rel="noopener">💬 WhatsApp Me</a>
+
+<nav>
+  <div class="nav-logo"><em>A/</em>M-8</div>
+  <div class="nav-right">
+    <div class="status-pill"><div class="dot"></div>Available</div>
+    <a class="nav-cta" href="#services">See Packages</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">// Design Studio — Open for Clients</div>
+    <h1 class="hero-title"><span class="sl">A/</span>M<span class="ds">-</span>8</h1>
+    <p class="hero-sub">WEB DESIGN &nbsp;·&nbsp; LOGO DESIGN &nbsp;·&nbsp; BRAND IDENTITY &nbsp;·&nbsp; UI/UX</p>
+    <div class="hero-btns">
+      <a class="btn-primary" href="#services">See Packages</a>
+      <a class="btn-secondary" href="#contact">Contact Me</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>WEB DESIGN</span><em>✦</em><span>LOGO CREATION</span><em>✦</em><span>BRAND IDENTITY</span><em>✦</em><span>UI/UX DESIGN</span><em>✦</em><span>SOCIAL MEDIA KITS</span><em>✦</em>
+    <span>WEB DESIGN</span><em>✦</em><span>LOGO CREATION</span><em>✦</em><span>BRAND IDENTITY</span><em>✦</em><span>UI/UX DESIGN</span><em>✦</em><span>SOCIAL MEDIA KITS</span><em>✦</em>
+  </div>
+</div>
+
+<section id="services">
+  <div class="s-label">// 001 — Packages & Pricing</div>
+  <h2 class="s-title">Choose Your Plan</h2>
+
+  <div class="service-block">
+    <div class="svc-heading"><h3>Logo Design</h3><div class="tag">Most Popular</div></div>
+    <div class="pkg-grid">
+      <div class="pkg">
+        <div class="pkg-tier">Tier 01</div><div class="pkg-price"><span>$</span>30</div>
+        <div class="pkg-name">Basic Logo</div>
+        <ul class="pkg-features"><li>1 logo concept</li><li>2 revisions</li><li>PNG + PDF delivery</li><li>3–4 day delivery</li><li class="no">Source file</li><li class="no">Multiple variations</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Logo Design — Basic ($30)')">Order Now</button>
+      </div>
+      <div class="pkg popular">
+        <div class="pkg-tier">Tier 02</div><div class="pkg-price"><span>$</span>60</div>
+        <div class="pkg-name">Standard Logo</div>
+        <ul class="pkg-features"><li>2 logo concepts</li><li>4 revisions</li><li>PNG + SVG + PDF</li><li>2–3 day delivery</li><li>Source file included</li><li class="no">Color variations</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Logo Design — Standard ($60)')">Order Now</button>
+      </div>
+      <div class="pkg">
+        <div class="pkg-tier">Tier 03</div><div class="pkg-price"><span>$</span>100</div>
+        <div class="pkg-name">Premium Logo</div>
+        <ul class="pkg-features"><li>3 logo concepts</li><li>Unlimited revisions</li><li>PNG + SVG + PDF + AI</li><li>Priority delivery</li><li>Source file included</li><li>Light + dark + color variations</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Logo Design — Premium ($100)')">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="service-block">
+    <div class="svc-heading"><h3>Web Design</h3></div>
+    <div class="pkg-grid">
+      <div class="pkg">
+        <div class="pkg-tier">Tier 01</div><div class="pkg-price"><span>$</span>120</div>
+        <div class="pkg-name">Landing Page</div>
+        <ul class="pkg-features"><li>1-page design</li><li>Mobile responsive</li><li>2 revisions</li><li>5–7 day delivery</li><li class="no">Multiple pages</li><li class="no">Animations</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Web Design — Landing Page ($120)')">Order Now</button>
+      </div>
+      <div class="pkg popular">
+        <div class="pkg-tier">Tier 02</div><div class="pkg-price"><span>$</span>250</div>
+        <div class="pkg-name">Business Site</div>
+        <ul class="pkg-features"><li>Up to 5 pages</li><li>Mobile responsive</li><li>4 revisions</li><li>7–10 day delivery</li><li>Basic animations</li><li class="no">E-commerce</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Web Design — Business Site ($250)')">Order Now</button>
+      </div>
+      <div class="pkg">
+        <div class="pkg-tier">Tier 03</div><div class="pkg-price"><span>$</span>500</div>
+        <div class="pkg-name">Full Website</div>
+        <ul class="pkg-features"><li>Unlimited pages</li><li>Mobile responsive</li><li>Unlimited revisions</li><li>Priority delivery</li><li>Advanced animations</li><li>E-commerce ready</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Web Design — Full Website ($500)')">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="service-block">
+    <div class="svc-heading"><h3>Brand Identity</h3></div>
+    <div class="pkg-grid">
+      <div class="pkg">
+        <div class="pkg-tier">Tier 01</div><div class="pkg-price"><span>$</span>150</div>
+        <div class="pkg-name">Starter Brand</div>
+        <ul class="pkg-features"><li>Logo design</li><li>Color palette</li><li>2 font selections</li><li>5–7 day delivery</li><li class="no">Business card</li><li class="no">Brand guidelines PDF</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Brand Identity — Starter ($150)')">Order Now</button>
+      </div>
+      <div class="pkg popular">
+        <div class="pkg-tier">Tier 02</div><div class="pkg-price"><span>$</span>280</div>
+        <div class="pkg-name">Pro Brand</div>
+        <ul class="pkg-features"><li>Logo + variations</li><li>Full color system</li><li>Typography guide</li><li>Business card design</li><li>Brand guidelines PDF</li><li class="no">Social media kit</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Brand Identity — Pro ($280)')">Order Now</button>
+      </div>
+      <div class="pkg">
+        <div class="pkg-tier">Tier 03</div><div class="pkg-price"><span>$</span>450</div>
+        <div class="pkg-name">Full Brand</div>
+        <ul class="pkg-features"><li>Complete logo suite</li><li>Full color + type system</li><li>Business card + letterhead</li><li>Brand guidelines PDF</li><li>Social media kit</li><li>All source files</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Brand Identity — Full ($450)')">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="service-block">
+    <div class="svc-heading"><h3>Social Media Kit</h3></div>
+    <div class="pkg-grid">
+      <div class="pkg">
+        <div class="pkg-tier">Tier 01</div><div class="pkg-price"><span>$</span>50</div>
+        <div class="pkg-name">Basic Kit</div>
+        <ul class="pkg-features"><li>Profile picture design</li><li>Instagram banner</li><li>3 post templates</li><li>3–4 day delivery</li><li class="no">Story highlights</li><li class="no">Reel covers</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Social Media Kit — Basic ($50)')">Order Now</button>
+      </div>
+      <div class="pkg popular">
+        <div class="pkg-tier">Tier 02</div><div class="pkg-price"><span>$</span>100</div>
+        <div class="pkg-name">Standard Kit</div>
+        <ul class="pkg-features"><li>Profile picture design</li><li>Banner + cover photos</li><li>6 post templates</li><li>Story highlights x6</li><li>4–5 day delivery</li><li class="no">Reel covers</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Social Media Kit — Standard ($100)')">Order Now</button>
+      </div>
+      <div class="pkg">
+        <div class="pkg-tier">Tier 03</div><div class="pkg-price"><span>$</span>180</div>
+        <div class="pkg-name">Elite Kit</div>
+        <ul class="pkg-features"><li>Full profile design</li><li>10 post templates</li><li>Story highlights x12</li><li>Reel cover designs</li><li>Bio link page design</li><li>All source files</li></ul>
+        <button class="pkg-btn" onclick="openOrder('Social Media Kit — Elite ($180)')">Order Now</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="s-label">// 002 — How It Works</div>
+  <h2 class="s-title">The Process</h2>
+  <div class="process-steps">
+    <div class="step"><h3>Discovery</h3><p>You tell me about your brand, goals, and style.</p></div>
+    <div class="step"><h3>Concepts</h3><p>I create unique concepts for you to review.</p></div>
+    <div class="step"><h3>Refine</h3><p>We polish together with revisions until it's perfect.</p></div>
+    <div class="step"><h3>Deliver</h3><p>Final files in all formats. You own 100% of the design.</p></div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="s-label">// 003 — FAQ</div>
+  <h2 class="s-title">Questions</h2>
+  <div class="faq-list">
+    <div class="faq-item"><button class="faq-q">How long does a project take? <span class="faq-icon">+</span></button><div class="faq-a">Logo: 3–5 days. Website: 5–14 days. Brand identity: 7–14 days. Rush delivery available.</div></div>
+    <div class="faq-item"><button class="faq-q">How many revisions do I get? <span class="faq-icon">+</span></button><div class="faq-a">Basic: 2, Standard: 4, Premium: unlimited. I work until you're happy.</div></div>
+    <div class="faq-item"><button class="faq-q">How do I pay? <span class="faq-icon">+</span></button><div class="faq-a">PayPal, bank transfer, or most major methods. 50% deposit to start, balance on delivery.</div></div>
+    <div class="faq-item"><button class="faq-q">What files will I receive? <span class="faq-icon">+</span></button><div class="faq-a">PNG, SVG, PDF, and source files depending on package. You own 100% — no license fees ever.</div></div>
+    <div class="faq-item"><button class="faq-q">Can I upgrade my package? <span class="faq-icon">+</span></button><div class="faq-a">Yes! Upgrade anytime — just pay the difference. Message me on WhatsApp or Telegram.</div></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div>
+    <div class="s-label">// 004 — Let's Work</div>
+    <h2 class="c-title">Got a<br>project<br>in<br><em>mind?</em></h2>
+    <div class="contact-info">
+      <div class="c-info-row">📧 ayubovm43@gmail.com</div>
+      <div class="c-info-row">📸 @ayubzoda.i8</div>
+      <div class="c-info-row">💬 +971 50 332 8599</div>
+      <div class="c-info-row">✈️ @AMgroup8</div>
+    </div>
+    <div class="socials">
+      <a class="social-btn" href="https://instagram.com/ayubzoda.i8" target="_blank">Instagram</a>
+      <a class="social-btn" href="https://wa.me/971503328599" target="_blank">WhatsApp</a>
+      <a class="social-btn" href="https://t.me/AMgroup8" target="_blank">Telegram</a>
+    </div>
+  </div>
+  <div>
+    <div class="cf">
+      <div class="cf-row">
+        <div class="field"><label>Your Name *</label><input type="text" id="f-name" placeholder="John Doe"></div>
+        <div class="field"><label>Email *</label><input type="email" id="f-email" placeholder="john@email.com"></div>
+      </div>
+      <div class="field">
+        <label>Service Needed</label>
+        <select id="f-service">
+          <option value="">Select a service...</option>
+          <optgroup label="Logo Design"><option>Logo — Basic ($30)</option><option>Logo — Standard ($60)</option><option>Logo — Premium ($100)</option></optgroup>
+          <optgroup label="Web Design"><option>Web — Landing Page ($120)</option><option>Web — Business Site ($250)</option><option>Web — Full Website ($500)</option></optgroup>
+          <optgroup label="Brand Identity"><option>Brand — Starter ($150)</option><option>Brand — Pro ($280)</option><option>Brand — Full ($450)</option></optgroup>
+          <optgroup label="Social Media Kit"><option>Social Kit — Basic ($50)</option><option>Social Kit — Standard ($100)</option><option>Social Kit — Elite ($180)</option></optgroup>
+          <option>Custom / Bundle</option>
+        </select>
+      </div>
+      <div class="field"><label>Project Details *</label><textarea id="f-msg" placeholder="Tell me about your brand, style, and what you need..."></textarea></div>
+      <div class="submit-btns">
+        <button class="send-btn send-email" onclick="submitContact()">📩 Send Message</button>
+        <button class="send-btn send-wa" onclick="submitWA()">💬 WhatsApp</button>
+      </div>
+      <div id="form-msg"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 A/M-8 Design Studio</span>
+  <div class="f-logo"><em>A/</em>M-8</div>
+  <span>@ayubzoda.i8</span>
+</footer>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.parentElement,wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!wasOpen)item.classList.add('open');
+  });
+});
+
+let selectedPkg='';
+function openOrder(pkg){
+  selectedPkg=pkg;
+  document.getElementById('modal-pkg-name').textContent='— '+pkg+' —';
+  document.getElementById('m-name').value='';
+  document.getElementById('m-email').value='';
+  document.getElementById('m-social').value='';
+  document.getElementById('m-msg').value='';
+  document.getElementById('modal-msg').style.display='none';
+  document.getElementById('orderModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('orderModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('orderModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+async function sendOrder(){
+  const name=document.getElementById('m-name').value.trim();
+  const email=document.getElementById('m-email').value.trim();
+  const social=document.getElementById('m-social').value.trim();
+  const msg=document.getElementById('m-msg').value.trim();
+  const mm=document.getElementById('modal-msg');
+  if(!name||!email||!msg){mm.className='err';mm.style.display='block';mm.textContent='Please fill in all required fields.';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){mm.className='err';mm.style.display='block';mm.textContent='Please enter a valid email.';return;}
+  mm.style.display='block';mm.style.color='rgba(240,238,234,.4)';mm.textContent='Sending...';
+  try{
+    const res=await fetch('https://formspree.io/f/mbdqnrlp',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({name,email,instagram:social||'N/A',package:selectedPkg,message:msg})});
+    if(res.ok){mm.className='ok';mm.textContent='✓ Order sent! I will contact you within 24 hours. 🎉';}
+    else{mm.className='err';mm.textContent='Something went wrong. Please try WhatsApp.';}
+  }catch(e){mm.className='err';mm.textContent='Connection error. Please try WhatsApp.';}
+}
+
+function sendOrderWA(){
+  const name=document.getElementById('m-name').value.trim();
+  const email=document.getElementById('m-email').value.trim();
+  const social=document.getElementById('m-social').value.trim();
+  const msg=document.getElementById('m-msg').value.trim();
+  const mm=document.getElementById('modal-msg');
+  if(!name||!msg){mm.className='err';mm.style.display='block';mm.textContent='Please fill in your name and project details.';return;}
+  const wa=encodeURIComponent('Hi! I want to place an order.\n\n📦 Package: '+selectedPkg+'\n👤 Name: '+name+'\n📧 Email: '+email+'\n📸 Instagram: '+(social||'N/A')+'\n\n📝 Details:\n'+msg);
+  window.open('https://wa.me/971503328599?text='+wa,'_blank');
+  mm.className='ok';mm.style.display='block';mm.textContent='✓ WhatsApp opened!';
+}
+
+async function submitContact(){
+  const name=document.getElementById('f-name').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const service=document.getElementById('f-service').value;
+  const msg=document.getElementById('f-msg').value.trim();
+  const fm=document.getElementById('form-msg');
+  if(!name||!email||!service||!msg){fm.className='err';fm.style.display='block';fm.textContent='Please fill in all fields.';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){fm.className='err';fm.style.display='block';fm.textContent='Please enter a valid email.';return;}
+  fm.style.display='block';fm.style.color='rgba(240,238,234,.4)';fm.textContent='Sending...';
+  try{
+    const res=await fetch('https://formspree.io/f/mbdqnrlp',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({name,email,service,message:msg})});
+    if(res.ok){fm.className='ok';fm.textContent='✓ Message sent! I will reply within 24 hours. 🎉';}
+    else{fm.className='err';fm.textContent='Something went wrong. Please try WhatsApp.';}
+  }catch(e){fm.className='err';fm.textContent='Connection error. Please try WhatsApp.';}
+}
+
+function submitWA(){
+  const name=document.getElementById('f-name').value.trim();
+  const service=document.getElementById('f-service').value;
+  const msg=document.getElementById('f-msg').value.trim();
+  const fm=document.getElementById('form-msg');
+  if(!name||!msg){fm.className='err';fm.style.display='block';fm.textContent='Please fill in your name and details.';return;}
+  const wa=encodeURIComponent('Hi! I found you on Instagram @ayubzoda.i8\n\n👤 Name: '+name+'\n📦 Service: '+(service||'Not specified')+'\n\n📝 '+msg);
+  window.open('https://wa.me/971503328599?text='+wa,'_blank');
+  fm.className='ok';fm.style.display='block';fm.textContent='✓ WhatsApp opened!';
+}
+
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='none';io.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.pkg,.step,.faq-item').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease,transform .5s ease';io.observe(el);});
+</script>
+
+</body>
+</html>
