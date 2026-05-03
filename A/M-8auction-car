@@ -1,0 +1,140 @@
+npm install lucide-react
+import React, { useState, useEffect } from 'react';
+import {
+  Car,
+  Clock,
+  Shield,
+  TrendingUp,
+  Plus,
+  LogOut,
+  BarChart3,
+  DollarSign,
+  Users,
+  Mail,
+  Eye,
+  EyeOff
+} from 'lucide-react';
+
+const CarAuctionWebsite = () => {
+  const [currentPage, setCurrentPage] = useState('login');
+  const [userRole, setUserRole] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [users, setUsers] = useState({});
+
+  const OWNER_EMAIL = 'owner@dubaiauctioncar.com';
+  const OWNER_FACE_ID = 'OWNER123';
+  const COMPANY_NAME = 'Dubai Auction Cars';
+
+  const [cars, setCars] = useState([
+    {
+      id: 1,
+      name: '2023 BMW M4',
+      image: '🚗',
+      startPrice: 1000,
+      bids: [],
+      participants: 3,
+      status: 'upcoming',
+      auctionCode: 'A/M-8',
+      auctionTime: 'Today 8:00 PM',
+      category: 'Luxury',
+      details: { year: 2023, mileage: '5000 km', color: 'Black', condition: 'Excellent' },
+      bio: 'Premium luxury sports car in excellent condition',
+      mileage: '5000 km',
+      transmission: 'Automatic',
+      fuelType: 'Petrol',
+      enginePower: '503 HP'
+    }
+  ]);
+
+  const [auctionSchedule] = useState([
+    { code: 'A/M-8', name: 'Dubai Auction Car - Main Event', time: 'Today 8:00 PM', status: 'active', cars: 3 }
+  ]);
+
+  const LoginPage = () => {
+    const [role, setRole] = useState(null);
+    const [ownerEmail, setOwnerEmail] = useState('');
+    const [ownerFaceId, setOwnerFaceId] = useState('');
+
+    const handleOwnerLogin = (e) => {
+      e.preventDefault();
+
+      if (ownerEmail === OWNER_EMAIL && ownerFaceId === OWNER_FACE_ID) {
+        setCurrentUser({ email: OWNER_EMAIL });
+        setUserRole('owner');
+        setCurrentPage('ownerDashboard');
+      } else {
+        alert('Invalid credentials');
+      }
+    };
+
+    if (!role) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+          <div className="space-y-4">
+            <button onClick={() => setRole('owner')} className="bg-purple-600 px-4 py-2 rounded">
+              Owner Login
+            </button>
+            <button onClick={() => setRole('bidder')} className="bg-blue-600 px-4 py-2 rounded">
+              Bidder Signup
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (role === 'owner') {
+      return (
+        <form onSubmit={handleOwnerLogin} className="p-6 text-white">
+          <input
+            placeholder="Email"
+            value={ownerEmail}
+            onChange={(e) => setOwnerEmail(e.target.value)}
+            className="block mb-2 p-2 text-black"
+          />
+          <input
+            placeholder="Face ID"
+            value={ownerFaceId}
+            onChange={(e) => setOwnerFaceId(e.target.value)}
+            className="block mb-2 p-2 text-black"
+          />
+          <button className="bg-green-600 px-4 py-2">Login</button>
+        </form>
+      );
+    }
+
+    return <div className="text-white p-10">Bidder Signup (simplified)</div>;
+  };
+
+  const HomePage = () => {
+    return (
+      <div className="p-10 text-white">
+        <h1>{COMPANY_NAME}</h1>
+        {cars.map((car) => (
+          <div key={car.id} className="mt-4 p-4 bg-slate-800 rounded">
+            <p>{car.name}</p>
+            <p>${car.startPrice}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const OwnerDashboard = () => {
+    return (
+      <div className="p-10 text-white">
+        <h1>Owner Dashboard</h1>
+        <p>Total Cars: {cars.length}</p>
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      {currentPage === 'login' && <LoginPage />}
+      {currentPage === 'home' && <HomePage />}
+      {currentPage === 'ownerDashboard' && <OwnerDashboard />}
+    </div>
+  );
+};
+
+export default CarAuctionWebsite;
